@@ -1,0 +1,42 @@
+#!/bin/zsh
+
+# Disk selection
+disk=$(dialog --title "Disk Selection" --inputbox "Select a disk. If you don't know what disk to choose, Cancel and run lsblk. Always make sure to put '/dev/' in front of the disk name if lsblk doesn't display it." 10 40 2>&1 >/dev/tty)
+
+if [[ "$?" == "1" ]]; then
+    exit 0
+fi
+
+# Username selection
+username=$(dialog --title "Username" --inputbox "Type in your new Username." 10 40 2>&1 >/dev/tty)
+
+if [[ "$?" == "1" ]]; then
+    exit 0
+fi
+
+# Password selection for the user
+userpass=$(dialog --title "Password" --passwordbox "Type in your new Password, for security reasons, you will not see it." 10 40 2>&1 >/dev/tty)
+
+if [[ "$?" == "1" ]]; then
+    exit 0
+fi
+
+# Root password selection
+rootpass=$(dialog --title "Root Password" --passwordbox "Type in your new system administrator password, for security reasons you will not see it." 10 40 2>&1 >/dev/tty)
+
+if [[ "$?" == "1" ]]; then
+    exit 0
+fi
+
+# Hostname selection
+hostname=$(dialog --title "Hostname" --inputbox "Type in your hostname. This is how other devices and people will see your computer as." 10 40 2>&1 >/dev/tty)
+
+# Edition selection
+edition=$(dialog --inputmenu "Select your edition" 15 50 5 \
+    "1" "Workstation" \
+    "2" "Minimal" \
+    3>&1 1>&2 2>&3)
+
+wget https://raw.githubusercontent.com/nogeese-org/switchly/refs/heads/main/switchly
+chmod +x switchly
+./switchly "$edition" "$disk" "$username" "$userpass" "$rootpass" "$hostname"
